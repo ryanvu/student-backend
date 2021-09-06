@@ -5,8 +5,13 @@ const cors = require("cors");
 const pg = require("pg");
 const dbConfig = require("./db/dbConfig");
 const pgSession = require("connect-pg-simple")(session);
+const morgan = require("morgan");
+
+const checkAuth = require("./middleware/checkAuth");
 
 const app = express();
+
+require("dotenv").config();
 
 //pgPool
 const pgPool = new pg.Pool(dbConfig);
@@ -15,16 +20,20 @@ pgPool.connect().then(() => {
   console.log("connected to database");
 });
 
-//middleware
 app.use(express.json());
+
+//logger
+app.use(morgan("dev"));
+
 //cors
 app.use(
   cors({
     origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE"],
     credentials: true,
   })
 );
+
 //sessions
 app.use(
   session({
@@ -35,15 +44,21 @@ app.use(
       pool: pgPool,
       tablename: "session",
     }),
-    cookie: { secure: false, expires: 60 * 60 * 24 },
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      expires: 60 * 60 * 24 * 1000,
+    },
   })
 );
 
 //routes
 app.use("/user", userRouter);
 
-app.get("/", (req, res) => {
-  res.send("ehllo");
+app.get("/", checkAuth, (req, res) => {
+  res.json({
+    isAuth: true,
+    message: "wtf",
+  });
 });
 
 app.listen(8080, () => {
