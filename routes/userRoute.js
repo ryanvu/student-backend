@@ -46,12 +46,14 @@ router.post("/register", async (req, res) => {
     }
     // error handling to find if username was taken or email
   } catch (error) {
-    if (error.detail.includes("user")) {
-      console.log(error);
-      return res.status(424).send(error);
+    if (error.detail.includes("username")) {
+      return res.status(424).json({
+        message: "Username is taken",
+      });
     } else if (error.detail.includes("email")) {
-      console.log(error);
-      return res.status(424).send(error);
+      return res.status(424).json({
+        message: "Email is taken",
+      });
     }
     return res.status(500).send("Unable to register");
   }

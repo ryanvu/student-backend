@@ -1,5 +1,6 @@
 const express = require("express");
 const userRouter = require("./routes/userRoute");
+const lessonRouter = require("./routes/lessonRoute");
 const session = require("express-session");
 const cors = require("cors");
 const pg = require("pg");
@@ -53,6 +54,7 @@ app.use(
 
 //routes
 app.use("/user", userRouter);
+app.use("/lessons", lessonRouter);
 
 app.get("/", checkAuth, (req, res) => {
   res.json({
