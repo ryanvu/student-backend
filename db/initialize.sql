@@ -8,14 +8,15 @@ CREATE TABLE users (
     email text NOT NULL UNIQUE,
     password text NOT NULL,
     first_name text NOT NULL,
-    last_name text NOT NULL
+    last_name text NOT NULL,
+    user_type text NOT NULL,
 );
 
 CREATE TABLE lessons (
     id SERIAL primary key,
     lesson_date TIMESTAMP NOT NULL,
-    teacher integer REFERENCES users(id),
-    student integer REFERENCES users(id),
+    teacher integer REFERENCES users(id) NOT NULL,
+    student integer REFERENCES users(id) NOT NULL,
     date_created TIMESTAMP NOT NULL default now()
 );
 

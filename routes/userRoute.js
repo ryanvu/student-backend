@@ -9,7 +9,7 @@ const saltRounds = 10;
 //register
 router.post("/register", async (req, res) => {
   //destructure request body
-  const { username, password, email, first, last } = req.body;
+  const { username, password, email, first, last, user_type } = req.body;
 
   //hashing password -> password from req.body + saltrounds defined earlier
   const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -20,6 +20,7 @@ router.post("/register", async (req, res) => {
     email,
     first_name: first,
     last_name: last,
+    user_type,
   };
   // sql query to insert new user object which returns all if successful
   try {
@@ -30,7 +31,8 @@ router.post("/register", async (req, res) => {
         "password",
         "email",
         "first_name",
-        "last_name"
+        "last_name",
+        "user_type"
       )} returning *`;
     // if the new user is sucessfully inserted, this will create a session to keep track of who has logged in
     if (newUser) {
@@ -40,6 +42,7 @@ router.post("/register", async (req, res) => {
         email: newUser[0].email,
         first: newUser[0].first_name,
         last: newUser[0].last_name,
+        user_type: newUser[0].user_type,
       };
 
       res.status(200).json({ isAuth: true, session: req.session.user });
@@ -75,6 +78,7 @@ router.post("/login", async (req, res) => {
           email: user[0].email,
           first: user[0].first_name,
           last: user[0].last_name,
+          user_type: user[0].user_type,
         };
 
         res.status(200).json({ isAuth: true, session: req.session.user });

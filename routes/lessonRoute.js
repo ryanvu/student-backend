@@ -19,4 +19,9 @@ router.get("/:user_id", async (req, res) => {
   }
 });
 
+router.post("/create", async (req, res) => {
+  try {
+  } catch (error) {}
+});
+
 module.exports = router;
